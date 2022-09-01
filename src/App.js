@@ -1,25 +1,60 @@
-import logo from './logo.svg';
+import React, { Component } from 'react';
+import "trix";
+import "trix/dist/trix.css";
+import { TrixEditor } from "react-trix";
 import './App.css';
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
+
+class App extends Component {
+  render () {
+    return (<div>
+      <header>
+        <h1 className="page-title">Custom editor in React.</h1>
       </header>
-    </div>
-  );
+      <Editor />
+      </div>
+    );
+  }
+}
+
+class Editor extends Component {
+
+  constructor(props) {
+    super(props);
+    this.state = {editorContent: ""}
+  }
+
+  handleChange = (text,html) => {
+    this.setState({editorContent: html})
+  }
+  
+  render() {
+
+    return (
+      <div className="editor">
+        <Toolbar editorContent={this.state.editorContent} />
+        <TrixEditor onChange={this.handleChange}  />
+      </div>
+    );
+    
+  }
+}
+
+class Toolbar extends Component {
+
+  saveButton = () => {
+    console.log(this.props.editorContent);
+  };
+
+  render(){
+    return (
+      <div className="toolbar">
+        <button className="save-button" onClick={this.saveButton}>
+            Spara
+        </button>
+      </div>
+    );
+  }
 }
 
 export default App;
