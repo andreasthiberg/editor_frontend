@@ -1,15 +1,18 @@
 
 export default function Toolbar(props) {
 
-    function saveButton() {
-      console.log(props.editorContent);
-    };
-
     return (
         <div className="toolbar">
-          <button className="save-button" onClick={saveButton}>
+          <button className="save-button" onClick={props.saveDocument}>
               Spara
           </button>
+          <button className="save-button" onClick={props.newDocument}>
+              Nytt dokument
+          </button>
+          <button className="save-button" onClick={props.removeAllDocuments}>
+              Ta bort alla dokument
+          </button>
         </div>
+        
       );
   }
