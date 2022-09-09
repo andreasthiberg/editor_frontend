@@ -1,11 +1,13 @@
+const URL = "https://jsramverk-editor-anth21.azurewebsites.net/";
+
 const docs = {
     getAllDocs: async function getAllDocs() {
-        const response = await fetch(`http://localhost:1337/docs`);
+        const response = await fetch(`${URL}/docs`);
         const result = await response.json();
         return result;
     },
     createDoc: async function createDoc(docName,docContent) {
-        const response = await fetch("http://localhost:1337/create", {
+        const response = await fetch(`${URL}/create`, {
      
             method: "POST",
              
@@ -24,10 +26,10 @@ const docs = {
         return result[0];
     },
     removeAll: async function removeAll(){
-        await fetch(`http://localhost:1337/remove-all`);
+        await fetch(`${URL}/remove-all`);
     },
     saveDocument: async function saveDocument(doc){
-        await fetch("http://localhost:1337/save", {
+        await fetch(`${URL}/save`, {
      
             method: "POST",
              

@@ -20,6 +20,16 @@ export default function Editor() {
           
       }, [currentDoc]);
 
+    useEffect(() => {
+        (async () => {
+          if(typeof editor != "undefined"){
+            editor.setSelectedRange([0,1000]);    
+            editor.insertString(currentDoc.content);
+          }
+        })();
+        
+    }, [currentDoc]);
+
     function handleChange (text,html) {
       let changedDocument = {...currentDoc};
       if(changedDocument.hasOwnProperty('_id')){
@@ -57,8 +67,6 @@ export default function Editor() {
         return doc._id === event.target.value;
       })
       setCurrentDoc(choosenDocument);
-      editor.setSelectedRange([0,1000]);    
-      editor.insertString(choosenDocument.content);
     };
     
     return (
