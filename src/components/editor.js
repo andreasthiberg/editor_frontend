@@ -8,30 +8,29 @@ import docsModel from '../models/docsModel';
 
 export default function Editor() {
 
-    const [docs, setDocs] = useState(["hej"]);
+    const [docs, setDocs] = useState([]);
     const [currentDoc, setCurrentDoc] = useState({});
     const [editor, setEditor] = useState();
 
     useEffect(() => {
           (async () => {
               const allDocs = await docsModel.getAllDocs();
-              console.log(allDocs);
               setDocs(allDocs);
           })();
           
       }, [currentDoc]);
 
-    
     function handleChange (text,html) {
       let changedDocument = {...currentDoc};
-      changedDocument.content = html;
-      setCurrentDoc(changedDocument);
-      console.log(currentDoc);
+      if(changedDocument.hasOwnProperty('_id')){
+        changedDocument.content = html;
+        setCurrentDoc(changedDocument);
+      }
     };
 
     /* Add a new document to database with title and content. Refresh list of documents */
-    async function newDocument(){
-      await docsModel.createDoc("Test","");
+    async function newDocument(newName){
+      await docsModel.createDoc(newName,"");
       refreshDocList();
     }
 
@@ -58,7 +57,7 @@ export default function Editor() {
         return doc._id === event.target.value;
       })
       setCurrentDoc(choosenDocument);
-      editor.setSelectedRange([0,1000]);
+      editor.setSelectedRange([0,1000]);    
       editor.insertString(choosenDocument.content);
     };
     

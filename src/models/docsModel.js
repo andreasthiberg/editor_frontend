@@ -5,7 +5,7 @@ const docs = {
         return result;
     },
     createDoc: async function createDoc(docName,docContent) {
-        await fetch("http://localhost:1337/create", {
+        const response = await fetch("http://localhost:1337/create", {
      
             method: "POST",
              
@@ -20,12 +20,13 @@ const docs = {
                 "Content-type": "application/json; charset=UTF-8"
             }
         });
+        const result = await response.json();
+        return result[0];
     },
     removeAll: async function removeAll(){
         await fetch(`http://localhost:1337/remove-all`);
     },
     saveDocument: async function saveDocument(doc){
-        console.log(doc);
         await fetch("http://localhost:1337/save", {
      
             method: "POST",
