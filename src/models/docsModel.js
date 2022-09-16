@@ -1,4 +1,4 @@
-const URL = "https://jsramverk-editor-anth21.azurewebsites.net/";
+const URL = "https://jsramverk-editor-anth21.azurewebsites.net";
 
 const docs = {
     getAllDocs: async function getAllDocs() {

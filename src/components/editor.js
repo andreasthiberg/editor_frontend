@@ -23,7 +23,6 @@ export default function Editor() {
 
       useEffect(() => {
         (async () => {
-          console.log("Hej");
           if(typeof editor != "undefined"){
             editor.setSelectedRange([0,1000]);    
             editor.insertString(currentDoc.content);
@@ -43,9 +42,9 @@ export default function Editor() {
     /* Add a new document to database with title and content. Refresh list of documents */
     async function newDocument(newName){
       const newDoc = await docsModel.createDoc(newName,"");
-      await refreshDocList();
       setCurrentDoc(newDoc);
       setCurrentDocName(newDoc.name);
+      await refreshDocList();
     }
 
     function saveDocument(){
@@ -78,7 +77,7 @@ export default function Editor() {
         <div className="editor">
           <Toolbar editorContent={"hej"} newDocument={newDocument} 
           removeAllDocuments={removeAllDocuments} saveDocument={saveDocument}/>
-          <div>Nuvarande dokument: {currentDocName}</div>
+          <div><h3 data-testid="document-title">Nuvarande dokument: {currentDocName}</h3></div>
           <TrixEditor onChange={handleChange} onEditorReady={handleEditorReady}  />
           <select data-testid="selection" onChange={pickDoc}>
           <option value="-99" key="0">Choose a document</option>
