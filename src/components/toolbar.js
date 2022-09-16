@@ -24,9 +24,9 @@ export default function Toolbar(props) {
           </button>
           <form>
               Namn på nytt dokument:
-              <input type="text" name="name" onChange={handleTitleChange}/>
+              <input data-testid="name-input" type="text" name="name" onChange={handleTitleChange}/>
           </form>
-          <button onClick={handleNewDocument}>Skapa nytt dokument</button>
+          <button data-testid="new-document" onClick={handleNewDocument}>Skapa nytt dokument</button>
         </div>
         
       );

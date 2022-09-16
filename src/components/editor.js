@@ -9,8 +9,9 @@ import docsModel from '../models/docsModel';
 export default function Editor() {
 
     const [docs, setDocs] = useState([]);
-    const [currentDoc, setCurrentDoc] = useState({});
+    const [currentDoc, setCurrentDoc] = useState({name:"",content:""});
     const [editor, setEditor] = useState();
+    const [currentDocName, setCurrentDocName] = useState("");
 
     useEffect(() => {
           (async () => {
@@ -20,15 +21,16 @@ export default function Editor() {
           
       }, [currentDoc]);
 
-    useEffect(() => {
+      useEffect(() => {
         (async () => {
+          console.log("Hej");
           if(typeof editor != "undefined"){
             editor.setSelectedRange([0,1000]);    
             editor.insertString(currentDoc.content);
           }
         })();
         
-    }, [currentDoc]);
+    }, [currentDocName])
 
     function handleChange (text,html) {
       let changedDocument = {...currentDoc};
@@ -40,8 +42,10 @@ export default function Editor() {
 
     /* Add a new document to database with title and content. Refresh list of documents */
     async function newDocument(newName){
-      await docsModel.createDoc(newName,"");
-      refreshDocList();
+      const newDoc = await docsModel.createDoc(newName,"");
+      await refreshDocList();
+      setCurrentDoc(newDoc);
+      setCurrentDocName(newDoc.name);
     }
 
     function saveDocument(){
@@ -67,14 +71,16 @@ export default function Editor() {
         return doc._id === event.target.value;
       })
       setCurrentDoc(choosenDocument);
+      setCurrentDocName(choosenDocument.name)
     };
     
     return (
         <div className="editor">
           <Toolbar editorContent={"hej"} newDocument={newDocument} 
           removeAllDocuments={removeAllDocuments} saveDocument={saveDocument}/>
+          <div>Nuvarande dokument: {currentDocName}</div>
           <TrixEditor onChange={handleChange} onEditorReady={handleEditorReady}  />
-          <select onChange={pickDoc}>
+          <select data-testid="selection" onChange={pickDoc}>
           <option value="-99" key="0">Choose a document</option>
           {docs.map((doc, index) => <option value={doc._id} key={index}>{doc.name}</option>)}
           </select>
