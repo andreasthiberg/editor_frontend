@@ -1,5 +1,5 @@
 
-const localDev = true;
+const localDev = false;
 let URL; 
 if (localDev){
     URL = "http://localhost:1337";
