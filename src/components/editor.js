@@ -22,7 +22,7 @@ export default function Editor() {
     useEffect(() => {
 
       /*Connect socket */
-      socket = io("http://localhost:1337");
+      socket = io("https://jsramverk-editor-anth21.azurewebsites.net/");
 
       /*Sent current document */
       socket.emit("doc",currentDoc);
