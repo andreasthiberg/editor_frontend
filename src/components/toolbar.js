@@ -1,4 +1,4 @@
-import { useState} from 'react';
+import React, { useState }  from 'react';
 
 export default function Toolbar(props) {
 
@@ -9,7 +9,7 @@ export default function Toolbar(props) {
     }
 
     const handleNewDocument = () => {
-      if(newTitle != ""){
+      if(newTitle !== ""){
         props.newDocument(newTitle);
       }
     }

@@ -1,25 +1,56 @@
-import { useState, useEffect} from 'react';
+import React, { useState, useEffect} from 'react';
 import "trix";
 import "trix/dist/trix.css";
 import { TrixEditor } from "react-trix";
 import Toolbar from './toolbar.js';
 import docsModel from '../models/docsModel';
+import io from "socket.io-client";
 
 
 export default function Editor() {
 
     const [docs, setDocs] = useState([]);
-    const [currentDoc, setCurrentDoc] = useState({name:"",content:""});
+    const [currentDoc, setCurrentDoc] = useState({name:"",content:"",_id:""});
     const [editor, setEditor] = useState();
     const [currentDocName, setCurrentDocName] = useState("");
 
+    
+    // Socket.io
+
+    let socket;
+
     useEffect(() => {
-          (async () => {
-              const allDocs = await docsModel.getAllDocs();
-              setDocs(allDocs);
-          })();
-          
-      }, [currentDoc]);
+
+      /*Connect socket */
+      socket = io("http://localhost:1337");
+
+      /*Sent current document */
+      socket.emit("doc",currentDoc);
+
+      socket.on("save", (doc)=> {
+        saveDocument();
+      })
+      /* React to update from other user working on same doc */
+      socket.on("update", (doc)=> {
+        if(doc["content"] !== currentDoc["content"]){
+          editor.setSelectedRange([0,1000]);    
+          editor.insertString(doc.content);
+        }
+      })
+
+      /* Update full doclist whenever changes are made elsewhere */
+      socket.on("change", (doc)=> {
+        if(doc["_id"] !== currentDoc["_id"]){
+          refreshDocList();
+        }
+      });
+
+      /* Disconnect when done */
+
+      return () => {
+        socket.disconnect()
+      }
+    },[currentDoc]);
 
       useEffect(() => {
         (async () => {
@@ -31,7 +62,7 @@ export default function Editor() {
         
     }, [currentDocName])
 
-    function handleChange (text,html) {
+    async function handleChange (text,html) {
       let changedDocument = {...currentDoc};
       if(changedDocument.hasOwnProperty('_id')){
         changedDocument.content = html;
@@ -44,11 +75,15 @@ export default function Editor() {
       const newDoc = await docsModel.createDoc(newName,"");
       setCurrentDoc(newDoc);
       setCurrentDocName(newDoc.name);
-      await refreshDocList();
+      refreshDocList();
     }
 
-    function saveDocument(){
-      docsModel.saveDocument(currentDoc);
+    async function saveDocument(){
+
+      if(currentDoc["_id"] !== ""){
+        docsModel.saveDocument(currentDoc);
+        refreshDocList();
+      }
     }
 
     function removeAllDocuments(){
@@ -63,9 +98,10 @@ export default function Editor() {
 
     function handleEditorReady(e) {
       setEditor(e);
+      refreshDocList();
     }
 
-    function pickDoc(event){
+    async function pickDoc(event){
       let choosenDocument = docs.find(doc => {
         return doc._id === event.target.value;
       })

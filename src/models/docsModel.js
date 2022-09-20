@@ -1,4 +1,12 @@
-const URL = "https://jsramverk-editor-anth21.azurewebsites.net";
+
+const localDev = true;
+let URL; 
+if (localDev){
+    URL = "http://localhost:1337";
+} else {
+    URL = "https://jsramverk-editor-anth21.azurewebsites.net";
+}
+
 
 const docs = {
     getAllDocs: async function getAllDocs() {
@@ -45,6 +53,7 @@ const docs = {
                 "Content-type": "application/json; charset=UTF-8"
             }
         });
+        return;
     }, 
 };
 
