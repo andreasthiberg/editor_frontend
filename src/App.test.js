@@ -1,4 +1,5 @@
 import { render, screen, waitFor } from '@testing-library/react';
+import React from "react";
 import App from '../src/App';
 import userEvent from '@testing-library/user-event'
 import {rest} from 'msw'
@@ -31,12 +32,7 @@ it('user writes in name field', () => {
   expect(input).toHaveValue("Test input");
 });
 
-it('user creates new document and title changes', async () => {
+it('document selector is rendered', async () => {
   const container = render(< App />);
-  const input = screen.getByTestId('name-input');
-  const newDocumentButton = screen.getByTestId('new-document');
-  userEvent.type(input, "Nytt testdokument");
-  userEvent.click(newDocumentButton);
-  await waitFor(() => screen.findByText('Nuvarande dokument: Nytt testdokument')) 
-  expect(screen.findByText('Nuvarande dokument: Nytt testdokument').toBeInTheDocument)
+  expect(screen.getByTestId("selection").toBeInTheDocument)
 });
