@@ -21,7 +21,7 @@ export default function registerForm() {
         <div className="register-form">
             <h3>Registrera ny användare</h3>
             E-mail<br />
-            <input className="login-field" type="email" value={email} onChange={(e) => setEmail(e.target.value)} /><br />
+            <input data-testid="register-email" className="login-field" type="email" value={email} onChange={(e) => setEmail(e.target.value)} /><br />
             Lösenord<br />
             <input className="login-field" type="password" value={password} onChange={(e) => setPassword(e.target.value)} /><br />
             <button onClick={handleSubmit}>Registrera</button>

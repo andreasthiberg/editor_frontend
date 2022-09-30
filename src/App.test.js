@@ -22,18 +22,18 @@ afterAll(() => server.close())
 it('render header', () => {
   const { container } = render(<App />);
 
-  expect(screen.getByText("Texredigerare i React.")).toBeInTheDocument();
+  expect(screen.getByText("Textredigerare i React.")).toBeInTheDocument();
 });
 
 it('user can type in register field', () => {
   const container = render(< App />);
   const input = screen.getByTestId('register-email');
-  userEvent.type(input, "Test input");
-  expect(input).toHaveValue("Test input");
+  userEvent.type(input, "Testinput");
+  expect(input).toHaveValue("Testinput");
 });
 
 it('render register form', () => {
   const { container } = render(<App />);
 
-  expect(screen.getAllByText("användare")).toBeInTheDocument();
+  expect(screen.getByText("Registrera ny användare")).toBeInTheDocument();
 });
