@@ -16,16 +16,14 @@ export default function Toolbar(props) {
 
     return (
         <div className="toolbar">
-          <button className="save-button" onClick={props.saveDocument}>
+          <button className="toolbar-button" onClick={props.saveDocument}>
               Spara
           </button>
-          <button className="save-button" onClick={props.removeAllDocuments}>
+          <button className="toolbar-button" onClick={props.removeAllDocuments}>
               Ta bort alla dokument
           </button>
-          <form>
               Namn på nytt dokument:
               <input data-testid="name-input" type="text" name="name" onChange={handleTitleChange}/>
-          </form>
           <button data-testid="new-document" onClick={handleNewDocument}>Skapa nytt dokument</button>
         </div>
         

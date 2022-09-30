@@ -1,43 +1,57 @@
 
-const localDev = false;
+const config = require("../config/config.json")
 let URL; 
-if (localDev){
-    URL = "http://localhost:1337";
+if (config.devMode === "true"){
+    URL = config.localDB;
 } else {
-    URL = "https://jsramverk-editor-anth21.azurewebsites.net";
+    URL = config.deployedDB;
 }
 
 
 const docs = {
-    getAllDocs: async function getAllDocs() {
-        const response = await fetch(`${URL}/docs`);
+
+    getUserDocs: async function getUserDocs(token,user) {
+        const response = await fetch(`${URL}/docs/`,{
+            headers: {
+                "x-access-token": token
+            }
+        });
         const result = await response.json();
         return result;
     },
-    createDoc: async function createDoc(docName,docContent) {
-        const response = await fetch(`${URL}/create`, {
+
+    createDoc: async function createDoc(docName,docContent,owner,token) {
+        const response = await fetch(`${URL}/docs/create`, {
      
             method: "POST",
              
             // Adding body or contents to send
             body: JSON.stringify({
                 name: docName,
-                content: docContent
+                content: docContent,
+                owner: owner
             }),
              
             // Adding headers to the request
             headers: {
-                "Content-type": "application/json; charset=UTF-8"
+                "Content-type": "application/json; charset=UTF-8",
+                "x-access-token": token
             }
         });
         const result = await response.json();
         return result[0];
     },
-    removeAll: async function removeAll(){
-        await fetch(`${URL}/remove-all`);
+
+    removeAll: async function removeAll(token){
+        await fetch(`${URL}/docs/remove-all`,{
+            headers: {
+                "x-access-token": token
+            }
+        });
     },
-    saveDocument: async function saveDocument(doc){
-        await fetch(`${URL}/save`, {
+
+    saveDocument: async function saveDocument(doc, token){
+        await fetch(`${URL}/docs/save`, {
      
             method: "POST",
              
@@ -50,7 +64,8 @@ const docs = {
              
             // Adding headers to the request
             headers: {
-                "Content-type": "application/json; charset=UTF-8"
+                "Content-type": "application/json; charset=UTF-8",
+                "x-access-token": token
             }
         });
         return;

@@ -1,19 +1,48 @@
+.page-container {
+  margin: 30px;
+}
+
 .toolbar {
-  background-color: rgb(135, 160, 132);
+  background-color: rgb(190, 227, 186);
   padding: 5px;
 }
 
-.save-button {
+button {
   border-radius: 0;
-  padding: 10px;
+  padding: 5px;
   margin: 5px;
 }
 
 .editor {
-  margin: 20px;
+  margin-bottom: 40px;
+}
+
+.add-user-form {
+  border: solid;
+  border-width: 1px;
+  background-color: rgb(190, 227, 186);
+  padding: 10px;
+  width: 400px;
+  margin-top: 20px;
+}
+
+.doc-select {
+  margin: 10px 0 10px 0;
 }
 
 .page-title {
   margin: 10px;
   margin-left: 30px;
+}
+
+.user-form {
+  margin: 0 0 10px 0;
+}
+
+.login-field {
+  margin: 5px;
+}
+
+select {
+  margin: 10px;
 }
