@@ -7,6 +7,7 @@ export default function loginForm(props) {
     const [password,setPassword] = useState("");
     const [loginMessage, setLoginMessage] = useState("");
 
+    //Attempt to login based on input -- checks against user database
     async function handleSubmit(){
         if(email.length > 0 && password.length > 0){
             let response = await authModel.login(email,password)
@@ -20,7 +21,6 @@ export default function loginForm(props) {
             setLoginMessage(response.loginMessage);
         }
     }
-
 
     return (
         <div className="login-form">

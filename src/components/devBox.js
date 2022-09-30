@@ -1,6 +1,7 @@
 import React, { useEffect, useState} from 'react';
 import authModel from '../models/authModel';
 
+//Component used for development, shows currently registered users
 export default function devBox() {
 
     const [allUsers, setAllUsers] = useState([]);

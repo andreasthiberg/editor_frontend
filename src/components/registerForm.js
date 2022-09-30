@@ -7,6 +7,7 @@ export default function registerForm() {
     const [password,setPassword] = useState("");
     const [registerMessage, setRegisterMessage] = useState("");
 
+    //Attempt to register user if fields are filled in
     async function handleSubmit(){
         if(email.length > 0 && password.length > 0){
             const result = await authModel.registerUser(email,password)
@@ -15,7 +16,6 @@ export default function registerForm() {
             setRegisterMessage(result.registerMessage);
         }
     }
-
 
     return (
         <div className="register-form">

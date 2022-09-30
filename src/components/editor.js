@@ -15,16 +15,19 @@ export default function Editor(props) {
   const [editor, setEditor] = useState();
   const [currentDocName, setCurrentDocName] = useState("Inget dokument valt.");
   
-  // Socket.io
+  // Socket.io setup
   let socket;
   useEffect(() => {
+
     /*Connect socket */
     socket = io("ws://jsramverk-editor-anth21.azurewebsites.net/");
+
     /*Sent current document */
     socket.emit("doc",currentDoc);
     socket.on("save", (doc)=> {
       saveDocument();
     })
+
     /* React to update from other user working on same doc */
     socket.on("update", (doc)=> {
       if(doc["content"] !== currentDoc["content"]){
@@ -32,18 +35,21 @@ export default function Editor(props) {
         editor.insertString(doc.content);
       }
     })
+
     /* Update full doclist whenever changes are made elsewhere */
     socket.on("change", (doc)=> {
       if(doc["_id"] !== currentDoc["_id"]){
         refreshDocList();
       }
     });
+
     /* Disconnect when done */
     return () => {
       socket.disconnect()
     }
   },[currentDoc]);
   
+  //Change editor content on doc change
   useEffect(() => {
       (async () => {
         if(typeof editor != "undefined"){
@@ -53,7 +59,6 @@ export default function Editor(props) {
       })();
       
   }, [currentDocName])
-
 
   // Reset states when logged out
   useEffect(() => {
@@ -66,11 +71,12 @@ export default function Editor(props) {
     
 }, [props.loggedIn])
 
-
+  //Get docs when logged in
   useEffect(() => {
     refreshDocList();
   },[props.jwt])
 
+  //Changes doc content when typing in editor
   async function handleChange (text,html) {
     let changedDocument = {...currentDoc};
     if(changedDocument.hasOwnProperty('_id')){
@@ -78,10 +84,6 @@ export default function Editor(props) {
       setCurrentDoc(changedDocument);
     }
   };
-
-  useEffect(() => {
-    refreshDocList();
-  },[props.jwt])
 
   /* Add a new document to database with title and content. Refresh list of documents */
   async function newDocument(newName){
@@ -92,17 +94,22 @@ export default function Editor(props) {
       refreshDocList();
     }
   }
+
+  //Save document content to database
   async function saveDocument(){
     if(currentDoc["_id"] !== ""){
       docsModel.saveDocument(currentDoc,props.jwt);
       refreshDocList();
     }
   }
+
+  //Deletes all documents from database. Remove in finished version!
   function removeAllDocuments(){
     docsModel.removeAll(props.jwt);
     refreshDocList();
   }
 
+  //Refresh list (and content) of documents from database
   async function refreshDocList(){
     const resultSet = await docsModel.getUserDocs(props.jwt);
     if ("docs" in resultSet){
@@ -117,10 +124,13 @@ export default function Editor(props) {
     }
   }
 
+  //Handle editor on page load, load initial documents
   function handleEditorReady(e) {
     setEditor(e);
     refreshDocList();
   }
+
+  //Change doc when user selects from list
   async function pickDoc(event){
     let choosenDocument = docs.find(doc => {
       return doc._id === event.target.value;
@@ -129,6 +139,8 @@ export default function Editor(props) {
     setCurrentDocName(choosenDocument.name)
   };
   
+
+  //Component only renders if user is logged in!
   if(props.jwt !== ""){
     return (
       <div className="editor">

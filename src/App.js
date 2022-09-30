@@ -19,12 +19,15 @@ export default function App() {
       </header>
       <Editor jwt={jwt} userEmail={userEmail} loggedIn={loggedIn}/>
       { jwt === "" ? 
-      <div className="user-form">
-      <RegisterForm />
-      <LoginForm setJwt={setJwt} setLoggedIn={setLoggedIn} setUserEmail={setUserEmail}/>
-      </div>
-      : <div className="user-form">Inloggad som {userEmail}</div> }
-      { jwt !== "" ? <LogoutButton setLoggedIn={setLoggedIn} setJwt={setJwt} setUserEmail={setUserEmail}/> : null}
+        <div className="user-form">
+        <RegisterForm />
+        <LoginForm setJwt={setJwt} setLoggedIn={setLoggedIn} setUserEmail={setUserEmail}/>
+        </div>
+        : <div className="user-form">Inloggad som {userEmail}</div> 
+      }
+      { jwt !== "" ? 
+        <LogoutButton setLoggedIn={setLoggedIn} setJwt={setJwt} setUserEmail={setUserEmail}/> : null
+      }
       <DevBox />
       </div>
     );
