@@ -32,8 +32,8 @@ it('user can type in register field', () => {
   expect(input).toHaveValue("Test input");
 });
 
-it('render login form', () => {
+it('render register form', () => {
   const { container } = render(<App />);
 
-  expect(screen.getAllByText("Logga in")).toBeInTheDocument();
+  expect(screen.getAllByText("användare")).toBeInTheDocument();
 });
