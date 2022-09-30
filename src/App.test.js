@@ -22,17 +22,18 @@ afterAll(() => server.close())
 it('render header', () => {
   const { container } = render(<App />);
 
-  expect(screen.getByText("Custom editor in React.")).toBeInTheDocument();
+  expect(screen.getByText("Texredigerare i React.")).toBeInTheDocument();
 });
 
-it('user writes in name field', () => {
+it('user can type in register field', () => {
   const container = render(< App />);
-  const input = screen.getByTestId('name-input');
+  const input = screen.getByTestId('register-email');
   userEvent.type(input, "Test input");
   expect(input).toHaveValue("Test input");
 });
 
-it('document selector is rendered', async () => {
-  const container = render(< App />);
-  expect(screen.getByTestId("selection").toBeInTheDocument)
+it('render login form', () => {
+  const { container } = render(<App />);
+
+  expect(screen.getByText("Logga in")).toBeInTheDocument();
 });
