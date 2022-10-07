@@ -3,8 +3,8 @@ import authModel from '../models/authModel';
 
 export default function loginForm(props) {
 
-    const [email,setEmail] = useState("");
-    const [password,setPassword] = useState("");
+    const [email,setEmail] = useState("andreas@email.com");
+    const [password,setPassword] = useState("123");
     const [loginMessage, setLoginMessage] = useState("");
 
     //Attempt to login based on input -- checks against user database
@@ -26,9 +26,9 @@ export default function loginForm(props) {
         <div className="login-form">
             <h3>Logga in</h3>
             E-mail<br />
-            <input required className="login-field" type="email" value={email} onChange={(e) => setEmail(e.target.value)} /><br />
+            <input required className="login-field" type="email" value={email} onChange={(e) => setEmail(e.target.value)}/><br />
             Lösenord<br />
-            <input required className="login-field" type="password" value={password} onChange={(e) => setPassword(e.target.value)} /><br />
+            <input required className="login-field" type="password" value={password} onChange={(e) => setPassword(e.target.value)}/><br />
             <button onClick={handleSubmit}>Logga in</button>
             {loginMessage}
         </div>

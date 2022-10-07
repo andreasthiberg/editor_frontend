@@ -10,11 +10,20 @@ if (config.devMode === "true"){
 
 const docs = {
 
-    getUserDocs: async function getUserDocs(token,user) {
-        const response = await fetch(`${URL}/docs/`,{
+    getDocs: async function getDocs(token) {
+
+        const graphqlQuery = {
+            "query": `{ documents { _id name content owner allowed_users } }`,
+        };
+
+        const response = await fetch(`${URL}/graphql/`,{
+            method: "POST",
             headers: {
-                "x-access-token": token
-            }
+                "x-access-token": token,
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
+            },
+            body: JSON.stringify(graphqlQuery)
         });
         const result = await response.json();
         return result;

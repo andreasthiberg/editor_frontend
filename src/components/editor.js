@@ -19,10 +19,10 @@ export default function Editor(props) {
   let socket;
   useEffect(() => {
 
-    /*Connect socket */
+    /* Connect socket */
     socket = io("ws://jsramverk-editor-anth21.azurewebsites.net/");
 
-    /*Sent current document */
+    /* Send current document */
     socket.emit("doc",currentDoc);
     socket.on("save", (doc)=> {
       saveDocument();
@@ -111,9 +111,10 @@ export default function Editor(props) {
 
   //Refresh list (and content) of documents from database
   async function refreshDocList(){
-    const resultSet = await docsModel.getUserDocs(props.jwt);
-    if ("docs" in resultSet){
-      let allDocs = resultSet.docs;
+    const resultSet = await docsModel.getDocs(props.jwt);
+    console.log(resultSet);
+    if ("data" in resultSet){
+      const allDocs = resultSet.data.documents
       let allowedDocs = [];
       for(let index in allDocs){
         if(allDocs[index].allowed_users.includes(props.userEmail)){
