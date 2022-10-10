@@ -6,6 +6,7 @@ import Toolbar from './toolbar.js';
 import docsModel from '../models/docsModel';
 import io from "socket.io-client";
 import AddUserForm from './addUserForm.js';
+import { jsPDF } from "jspdf";
 
 
 export default function Editor(props) {
@@ -139,6 +140,27 @@ export default function Editor(props) {
     setCurrentDoc(choosenDocument);
     setCurrentDocName(choosenDocument.name)
   };
+
+  //Create PDF
+  function createPdf(){
+    if(currentDoc.name="Inget dokument valt."){
+      return;
+    }
+    const doc = new jsPDF();
+    doc.setFontSize(12);
+    const title = currentDoc.name;
+    const content = currentDoc.content;
+    let contentWithBreaks = content.replace(/(.{90})/g,"$1\n")
+    let finishedDoc = title+"\n\n\n"+contentWithBreaks;
+    doc.text(finishedDoc,15,30)
+    doc.save(currentDoc.name + ".pdf");
+  }
+
+  function addComment(){
+    if(currentDoc.name="Inget dokument valt."){
+      return;
+    }
+  }
   
 
   //Component only renders if user is logged in!
@@ -146,7 +168,7 @@ export default function Editor(props) {
     return (
       <div className="editor">
         <Toolbar newDocument={newDocument} 
-        removeAllDocuments={removeAllDocuments} saveDocument={saveDocument}/>
+        removeAllDocuments={removeAllDocuments} saveDocument={saveDocument} createPdf={createPdf}/>
         <div><h3 data-testid="document-title">Nuvarande dokument: {currentDocName}</h3></div>
         <TrixEditor onChange={handleChange} onEditorReady={handleEditorReady}  />
         <select className="doc-select" data-testid="selection" onChange={pickDoc}>

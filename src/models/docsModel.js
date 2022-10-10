@@ -78,7 +78,29 @@ const docs = {
             }
         });
         return;
-    }, 
+    },
+
+    addComment: async function addComment(docId, row, comment, token){
+        const response = await fetch(`${URL}/docs/addcomment`, {
+     
+            method: "POST",
+             
+            // Adding body or contents to send
+            body: JSON.stringify({
+                id: docId,
+                row: row,
+                comment: comment
+            }),
+             
+            // Adding headers to the request
+            headers: {
+                "Content-type": "application/json; charset=UTF-8",
+                "x-access-token": token
+            }
+        });
+        const result = await response.json();
+        return result[0];
+    }
 };
 
 export default docs;
