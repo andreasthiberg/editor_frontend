@@ -1,5 +1,5 @@
 {
     "devMode": "true",
-    "localDB": "http://localhost:1337",
-    "deployedDB": "https://jsramverk-editor-anth21.azurewebsites.net"
+    "localDB": "localhost:1337",
+    "deployedDB": "jsramverk-editor-anth21.azurewebsites.net"
 }

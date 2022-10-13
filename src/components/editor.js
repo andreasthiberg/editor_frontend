@@ -6,22 +6,35 @@ import Toolbar from './toolbar.js';
 import docsModel from '../models/docsModel';
 import io from "socket.io-client";
 import AddUserForm from './addUserForm.js';
+import AddCommentForm from './addCommentForm.js';
+import CommentDisplay from './commentDisplay.js';
 import { jsPDF } from "jspdf";
+
+const config = require("../config/config.json")
+let URL; 
+if (config.devMode === "true"){
+    URL = config.localDB;
+} else {
+    URL = config.deployedDB;
+}
 
 
 export default function Editor(props) {
 
   const [docs, setDocs] = useState([]);
-  const [currentDoc, setCurrentDoc] = useState({name:"",content:"",_id:""});
+  const [currentDoc, setCurrentDoc] = useState({name:"",content:"",_id:"",comments:[]});
   const [editor, setEditor] = useState();
   const [currentDocName, setCurrentDocName] = useState("Inget dokument valt.");
+  const [newComment,setNewComment] = useState("");
+  const [showCommentForm,setShowCommentForm] = useState(false);
+  const [currentRow,setCurrentRow] = useState("");
   
   // Socket.io setup
   let socket;
   useEffect(() => {
 
     /* Connect socket */
-    socket = io("ws://jsramverk-editor-anth21.azurewebsites.net/");
+    socket = io(`ws://${URL}/`);
 
     /* Send current document */
     socket.emit("doc",currentDoc);
@@ -65,7 +78,7 @@ export default function Editor(props) {
   useEffect(() => {
     (async () => {
       if(!props.loggedIn){
-        setCurrentDoc({name:"",content:"",_id:""});
+        setCurrentDoc({name:"",content:"",_id:"",comments:[]});
         setCurrentDocName("Inget dokument valt");
       }
     })();
@@ -76,6 +89,9 @@ export default function Editor(props) {
   useEffect(() => {
     refreshDocList();
   },[props.jwt])
+
+  
+
 
   //Changes doc content when typing in editor
   async function handleChange (text,html) {
@@ -113,7 +129,6 @@ export default function Editor(props) {
   //Refresh list (and content) of documents from database
   async function refreshDocList(){
     const resultSet = await docsModel.getDocs(props.jwt);
-    console.log(resultSet);
     if ("data" in resultSet){
       const allDocs = resultSet.data.documents
       let allowedDocs = [];
@@ -143,7 +158,7 @@ export default function Editor(props) {
 
   //Create PDF
   function createPdf(){
-    if(currentDoc.name="Inget dokument valt."){
+    if(currentDoc.name==="Inget dokument valt."){
       return;
     }
     const doc = new jsPDF();
@@ -156,12 +171,36 @@ export default function Editor(props) {
     doc.save(currentDoc.name + ".pdf");
   }
 
-  function addComment(){
-    if(currentDoc.name="Inget dokument valt."){
-      return;
-    }
+  async function addComment(){
+    const currentRow = getCurrentRow()
+    await docsModel.addComment(currentDoc._id,currentRow,newComment,props.jwt)
+    let newCurrentDoc = ({...currentDoc});
+    let oldComments = [...currentDoc.comments]
+    oldComments.push({row: currentRow, content: newComment});
+    newCurrentDoc.comments = oldComments;
+    setCurrentDoc(newCurrentDoc);
+    setNewComment("");
+    setShowCommentForm(false);
   }
   
+  //Get the row where the user is currently selecting. If empty content return 0 (First row).
+  function getCurrentRow(){
+    const currentContent = currentDoc.content;
+    const currentSelectionStart = editor.getSelectedRange()[0];
+    const contentBeforeSelection = currentContent.substring(0,currentSelectionStart);
+
+    if (contentBeforeSelection !== ""){
+      const re = /\n/g
+      let rowCount = ((contentBeforeSelection || '').match(re) || []).length
+      return rowCount;
+    }
+    return 0;
+  }
+
+  function displayCommentForm(){
+    setShowCommentForm(true);
+    setCurrentRow(getCurrentRow());
+  }
 
   //Component only renders if user is logged in!
   if(props.jwt !== ""){
@@ -171,11 +210,24 @@ export default function Editor(props) {
         removeAllDocuments={removeAllDocuments} saveDocument={saveDocument} createPdf={createPdf}/>
         <div><h3 data-testid="document-title">Nuvarande dokument: {currentDocName}</h3></div>
         <TrixEditor onChange={handleChange} onEditorReady={handleEditorReady}  />
+        {currentDoc.name !== "" &&
+        <button onClick={displayCommentForm}>Lägg till kommentar på vald rad</button>
+        }
+        <br/>
         <select className="doc-select" data-testid="selection" onChange={pickDoc}>
         <option value="-99" key="0">Välj ett dokument</option>
         {docs.map((doc, index) => <option value={doc._id} key={index}>{doc.name}</option>)}
         </select>
-        <AddUserForm className="add-user-form" docs={docs} jwt={props.jwt}/>
+        <div className="option-boxes">
+        <AddUserForm docs={docs} jwt={props.jwt}/>
+        {currentDoc.name !== "" &&
+        <CommentDisplay currentDoc={currentDoc}/>
+        }
+        {showCommentForm &&
+        <AddCommentForm currentRow={currentRow} addComment={addComment} newComment={newComment} setNewComment={setNewComment}/>
+        }
+
+        </div>
       </div>
     );
   } else {

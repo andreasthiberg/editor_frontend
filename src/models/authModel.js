@@ -2,10 +2,11 @@
 const config = require("../config/config.json")
 let URL; 
 if (config.devMode === "true"){
-    URL = config.localDB;
+    URL ="http://" + config.localDB;
 } else {
-    URL = config.deployedDB;
+    URL = "https://" + config.deployedDB;
 }
+
 
 const auth = {
     registerUser: async function registerUser(email,password) {

@@ -2,9 +2,9 @@
 const config = require("../config/config.json")
 let URL; 
 if (config.devMode === "true"){
-    URL = config.localDB;
+    URL ="http://" + config.localDB;
 } else {
-    URL = config.deployedDB;
+    URL = "https://" + config.deployedDB;
 }
 
 
@@ -13,7 +13,7 @@ const docs = {
     getDocs: async function getDocs(token) {
 
         const graphqlQuery = {
-            "query": `{ documents { _id name content owner allowed_users } }`,
+            "query": `{ documents { _id name content owner allowed_users comments { row content } } }`,
         };
 
         const response = await fetch(`${URL}/graphql/`,{
@@ -81,7 +81,7 @@ const docs = {
     },
 
     addComment: async function addComment(docId, row, comment, token){
-        const response = await fetch(`${URL}/docs/addcomment`, {
+        const result = await fetch(`${URL}/docs/addcomment`, {
      
             method: "POST",
              
@@ -98,8 +98,7 @@ const docs = {
                 "x-access-token": token
             }
         });
-        const result = await response.json();
-        return result[0];
+        return result;
     }
 };
 
