@@ -39,7 +39,6 @@
   padding: 10px;
   width: 400px;
   margin-top: 20px;
-  height: 150px;
 }
 
 .add-comment-form {
@@ -61,6 +60,10 @@
 button {
   border-radius: 0;
   padding: 5px;
+  margin: 5px;
+}
+
+input {
   margin: 5px;
 }
 

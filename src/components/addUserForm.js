@@ -1,5 +1,6 @@
 import React, { useEffect, useState} from 'react';
 import authModel from '../models/authModel';
+import emailModel from '../models/emailModel';
 
 export default function addUserForm(props) {
 
@@ -7,6 +8,7 @@ export default function addUserForm(props) {
     const [newUser,setNewUser] = useState("");
     const [docId,setDocId] = useState("");
     const [addUserMessage,setAddUserMessage] = useState("");
+    const [email,setEmail] = useState("");
 
     useEffect(() => {
         refreshUserList();
@@ -19,6 +21,14 @@ export default function addUserForm(props) {
         } else {
             setAddUserMessage("Välj dokument/användare.")
         }
+    }
+
+    async function handleInputEmail(e){
+        setEmail(e.target.value)
+    }
+
+    async function handleSubmitEmail(){
+        emailModel.sendEmail("Hallå",12,props.jwt)
     }
 
     async function refreshUserList(){
@@ -35,8 +45,9 @@ export default function addUserForm(props) {
     }
 
     return (
-        <div className="add-user-form">
-            Ge användare rätt till dokument<br/>
+        <div>
+            <div className="add-user-form">
+            Ge användare rätt till ett dokument<br/>
             <select onChange={selectUser}>
             <option value="-99" key="0">Välj en användare</option>
             {allUsers.map((user, index) => <option value={user.email} key={index}>{user.email}</option>)}
@@ -46,7 +57,13 @@ export default function addUserForm(props) {
             {props.docs.map((doc, index) => <option value={doc._id} key={index}>{doc.name}</option>)}
             </select><br/>
             <button onClick={handleSubmit}>Lägg till</button>
-            {addUserMessage}
+            {addUserMessage}<br/><br/>
+            </div>
+            <div className="add-user-form">
+            Bjud någon för att redigera det valda dokumentet<br/>
+            Email:<input type="text" value={email} onChange={handleInputEmail}></input>
+            <button onClick={handleSubmitEmail}>Skicka email</button>
+            </div>
         </div>
       );
 

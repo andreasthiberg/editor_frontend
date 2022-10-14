@@ -32,7 +32,6 @@ export default function Editor(props) {
   // Socket.io setup
   let socket;
   useEffect(() => {
-
     /* Connect socket */
     socket = io(`ws://${URL}/`);
 
@@ -171,6 +170,8 @@ export default function Editor(props) {
     doc.save(currentDoc.name + ".pdf");
   }
 
+  //Adds a comment based on the currently selected row in the document, and the input
+  // in the comment form. 
   async function addComment(){
     const currentRow = getCurrentRow()
     await docsModel.addComment(currentDoc._id,currentRow,newComment,props.jwt)
@@ -219,21 +220,21 @@ export default function Editor(props) {
         {docs.map((doc, index) => <option value={doc._id} key={index}>{doc.name}</option>)}
         </select>
         <div className="option-boxes">
-        <AddUserForm docs={docs} jwt={props.jwt}/>
-        {currentDoc.name !== "" &&
+        <AddUserForm currentDoc={currentDoc} docs={docs} jwt={props.jwt}/>
+        {currentDoc.comments.length > 0 &&
         <CommentDisplay currentDoc={currentDoc}/>
         }
         {showCommentForm &&
-        <AddCommentForm currentRow={currentRow} addComment={addComment} newComment={newComment} setNewComment={setNewComment}/>
+        <AddCommentForm setShowCommentForm={setShowCommentForm} 
+        currentRow={currentRow} addComment={addComment} newComment={newComment} 
+        setNewComment={setNewComment}/>
         }
 
         </div>
       </div>
     );
   } else {
-    return (
-      <div>Välkommen! Logga in nedan för att komma till text-redigeraren.</div>
-    )
+    return null
   }
 
 }

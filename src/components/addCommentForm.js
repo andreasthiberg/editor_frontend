@@ -10,6 +10,12 @@ export default function addCommentForm(props) {
         }
     }
 
+
+    async function handleSubmitCancel(){
+        props.setShowCommentForm(false);
+    }
+
+
     function handleInput(e){
         props.setNewComment(e.target.value);
     }
@@ -21,6 +27,7 @@ export default function addCommentForm(props) {
             <br/>
             <input type="text" value={props.newComment} onChange={handleInput}></input>
             <button onClick={handleSubmit}>Lägg till</button>
+            <button onClick={handleSubmitCancel}>Avbryt</button>
         </div>
       );
 
