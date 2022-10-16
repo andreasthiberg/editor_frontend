@@ -16,6 +16,15 @@ export default function Toolbar(props) {
 
     return (
         <div className="toolbar">
+          <button className="toolbar-button" onClick={props.changeMode}>
+              Text/kod-läge
+          </button>
+          Du är i {props.mode}-läge.
+          {props.mode === "code" ?
+          <button className="toolbar-button" onClick={props.exCode}>
+              Exekvera
+          </button>
+          : null}
           <button className="toolbar-button" onClick={props.saveDocument}>
               Spara
           </button>

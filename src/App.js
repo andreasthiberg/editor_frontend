@@ -21,6 +21,7 @@ export default function App() {
     const queryParams = new URLSearchParams(window.location.search);
     const regId = queryParams.get('regId');
     const regName = queryParams.get('name');
+  
 
     useEffect(() => {
       if(regId !== null){
@@ -34,7 +35,9 @@ export default function App() {
       <header>
         <h1 className="page-title">Textredigerare i React.</h1>
       </header>
-      <Editor jwt={jwt} userEmail={userEmail} loggedIn={loggedIn}/>
+
+
+      <Editor jwt={jwt} userEmail={userEmail} loggedIn={loggedIn}/> 
       { registerLink ?
         <LinkRegisterForm inviteDocumentId={inviteDocumentId} setJwt={setJwt}
         setLoggedIn={setLoggedIn} setUserEmail={setUserEmail} setRegisterLink={setRegisterLink}

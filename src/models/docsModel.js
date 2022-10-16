@@ -13,7 +13,7 @@ const docs = {
     getDocs: async function getDocs(token) {
 
         const graphqlQuery = {
-            "query": `{ documents { _id name content owner allowed_users comments { row content } } }`,
+            "query": `{ documents { _id name content owner allowed_users mode comments { row content } } }`,
         };
 
         const response = await fetch(`${URL}/graphql/`,{
@@ -29,7 +29,7 @@ const docs = {
         return result;
     },
 
-    createDoc: async function createDoc(docName,docContent,owner,token) {
+    createDoc: async function createDoc(docName,docContent,owner,mode,token) {
         const response = await fetch(`${URL}/docs/create`, {
      
             method: "POST",
@@ -38,7 +38,8 @@ const docs = {
             body: JSON.stringify({
                 name: docName,
                 content: docContent,
-                owner: owner
+                owner: owner,
+                mode: mode
             }),
              
             // Adding headers to the request
@@ -48,6 +49,7 @@ const docs = {
             }
         });
         const result = await response.json();
+        console.log(result);
         return result[0];
     },
 

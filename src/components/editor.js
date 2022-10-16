@@ -4,10 +4,13 @@ import "trix/dist/trix.css";
 import { TrixEditor } from "react-trix";
 import Toolbar from './toolbar.js';
 import docsModel from '../models/docsModel';
+import codeModel from '../models/codeModel';
 import io from "socket.io-client";
 import AddUserForm from './addUserForm.js';
 import AddCommentForm from './addCommentForm.js';
 import CommentDisplay from './commentDisplay.js';
+import CodeMirror from '@uiw/react-codemirror';
+import { javascript } from '@codemirror/lang-javascript';
 import { jsPDF } from "jspdf";
 
 const config = require("../config/config.json")
@@ -28,10 +31,14 @@ export default function Editor(props) {
   const [newComment,setNewComment] = useState("");
   const [showCommentForm,setShowCommentForm] = useState(false);
   const [currentRow,setCurrentRow] = useState("");
+  const [mode, setMode] = useState("text");
+  const [selectReset, setSelectReset] = useState(0);
+  const [codeResult, setCodeResult] = useState("Kodresultat visas här");
   
   // Socket.io setup
   let socket;
   useEffect(() => {
+    if(mode === "text"){
     /* Connect socket */
     socket = io(`ws://${URL}/`);
 
@@ -60,14 +67,19 @@ export default function Editor(props) {
     return () => {
       socket.disconnect()
     }
+    }
   },[currentDoc]);
   
   //Change editor content on doc change
   useEffect(() => {
       (async () => {
-        if(typeof editor != "undefined"){
-          editor.setSelectedRange([0,1000]);    
-          editor.insertString(currentDoc.content);
+        if(mode === "text"){
+          if(typeof editor != "undefined"){
+            editor.setSelectedRange([0,1000]);    
+            editor.insertString(currentDoc.content);
+          }
+        } else {
+
         }
       })();
       
@@ -89,9 +101,15 @@ export default function Editor(props) {
     refreshDocList();
   },[props.jwt])
 
+  //Codemirror editor change
+  async function onChange (value, viewUpdate) {
+    let changedDocument = {...currentDoc};
+    if(changedDocument.hasOwnProperty('_id')){
+      changedDocument.content = value;
+      setCurrentDoc(changedDocument);
+    }
+  };
   
-
-
   //Changes doc content when typing in editor
   async function handleChange (text,html) {
     let changedDocument = {...currentDoc};
@@ -103,7 +121,7 @@ export default function Editor(props) {
 
   /* Add a new document to database with title and content. Refresh list of documents */
   async function newDocument(newName){
-    const newDoc = await docsModel.createDoc(newName,"",props.userEmail,props.jwt);
+    const newDoc = await docsModel.createDoc(newName,"",props.userEmail,mode,props.jwt);
     if("name" in newDoc){
       setCurrentDoc(newDoc);
       setCurrentDocName(newDoc.name);
@@ -126,15 +144,15 @@ export default function Editor(props) {
   }
 
   //Refresh list (and content) of documents from database
-  async function refreshDocList(){
+  async function refreshDocList(newMode = mode){
     const resultSet = await docsModel.getDocs(props.jwt);
     if ("data" in resultSet){
       const allDocs = resultSet.data.documents
       let allowedDocs = [];
       for(let index in allDocs){
-        if(allDocs[index].allowed_users.includes(props.userEmail)){
+        if(allDocs[index].allowed_users.includes(props.userEmail) && allDocs[index].mode === newMode){
             allowedDocs.push({...allDocs[index]})
-        }
+      }
       setDocs(allowedDocs);
     }
     }
@@ -148,6 +166,9 @@ export default function Editor(props) {
 
   //Change doc when user selects from list
   async function pickDoc(event){
+    if(event.target.value === "-99"){
+      return
+    }
     let choosenDocument = docs.find(doc => {
       return doc._id === event.target.value;
     })
@@ -203,19 +224,59 @@ export default function Editor(props) {
     setCurrentRow(getCurrentRow());
   }
 
+  function changeMode(){
+
+    if (mode === "text"){
+      setMode("code")
+      refreshDocList("code");
+      
+    } else {
+      setMode("text")
+      refreshDocList("text");
+    }
+
+    //Resets document selection form and sets choosen doc to blank
+    if(selectReset === 0){
+      setSelectReset(1)
+    } else {
+      setSelectReset(0)
+    }
+    setCurrentDoc({name:"",content:"",_id:"",comments:[]})
+    setCurrentDocName("Inget dokument valt.")
+  }
+
+  async function exCode(){
+    if(currentDoc.name !== ""){
+      let result = await codeModel.sendCode(currentDoc.content)
+      setCodeResult(result);
+    }
+  }
+
   //Component only renders if user is logged in!
   if(props.jwt !== ""){
     return (
       <div className="editor">
-        <Toolbar newDocument={newDocument} 
+        <Toolbar exCode={exCode} mode={mode} changeMode={changeMode} newDocument={newDocument} 
         removeAllDocuments={removeAllDocuments} saveDocument={saveDocument} createPdf={createPdf}/>
         <div><h3 data-testid="document-title">Nuvarande dokument: {currentDocName}</h3></div>
+        {mode === "text" ?
         <TrixEditor onChange={handleChange} onEditorReady={handleEditorReady}  />
+        :  
+        <div>
+        <CodeMirror
+        value={currentDoc.content}
+        height="200px"
+        extensions={[javascript({ jsx: true })]}
+        onChange={onChange}
+        />
+        <div className="code-result">{codeResult}</div>
+        </div>
+        }
         {currentDoc.name !== "" &&
         <button onClick={displayCommentForm}>Lägg till kommentar på vald rad</button>
         }
         <br/>
-        <select className="doc-select" data-testid="selection" onChange={pickDoc}>
+        <select className="doc-select" key={selectReset} onChange={pickDoc}>
         <option value="-99" key="0">Välj ett dokument</option>
         {docs.map((doc, index) => <option value={doc._id} key={index}>{doc.name}</option>)}
         </select>
