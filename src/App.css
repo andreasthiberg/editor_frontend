@@ -30,6 +30,7 @@
   padding: 10px;
   width: 400px;
   margin-top: 20px;
+  min-height: 10px;
 }
 
 .add-user-form {
@@ -39,6 +40,7 @@
   padding: 10px;
   width: 400px;
   margin-top: 20px;
+  min-height: 80px;
 }
 
 .add-comment-form {

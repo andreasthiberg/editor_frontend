@@ -1,5 +1,4 @@
 import React, { useState} from 'react';
-import auth from '../models/authModel';
 import authModel from '../models/authModel';
 
 export default function linkRegisterForm(props) {

@@ -9,7 +9,7 @@ if (config.devMode === "true"){
 
 
 const email = {
-    sendEmail: async function sendEmail(email,docId,token) {
+    sendEmail: async function sendEmail(email,docId,docName,token) {
         const response = await fetch(`${URL}/email/send`, {
      
             method: "POST",
@@ -17,7 +17,8 @@ const email = {
             // Adding body or contents to send
             body: JSON.stringify({
                 email: email,
-                id: docId
+                id: docId,
+                name: docName
             }),
              
             // Adding headers to the requestxw

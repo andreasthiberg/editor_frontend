@@ -9,6 +9,7 @@ export default function addUserForm(props) {
     const [docId,setDocId] = useState("");
     const [addUserMessage,setAddUserMessage] = useState("");
     const [email,setEmail] = useState("");
+    const [sendEmailMessage,setSendEmailMessage] = useState("");
 
     useEffect(() => {
         refreshUserList();
@@ -28,7 +29,16 @@ export default function addUserForm(props) {
     }
 
     async function handleSubmitEmail(){
-        emailModel.sendEmail("Hallå",12,props.jwt)
+
+        //Email regex check
+        let emailReg = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
+        let result = emailReg.test(email);
+        if (result){
+            emailModel.sendEmail(email,props.currentDoc._id,props.currentDoc.name,props.jwt)
+            setSendEmailMessage("Inbjudan skickad.")
+        } else {
+            setSendEmailMessage("Ogiltig e-mail.")
+        }
     }
 
     async function refreshUserList(){
@@ -59,11 +69,14 @@ export default function addUserForm(props) {
             <button onClick={handleSubmit}>Lägg till</button>
             {addUserMessage}<br/><br/>
             </div>
+            { props.currentDoc.name !== "" ?
             <div className="add-user-form">
-            Bjud någon för att redigera det valda dokumentet<br/>
-            Email:<input type="text" value={email} onChange={handleInputEmail}></input>
-            <button onClick={handleSubmitEmail}>Skicka email</button>
-            </div>
+                Bjud någon för att redigera det valda dokumentet<br/>
+                Email:<input type="text" value={email} onChange={handleInputEmail}></input>
+                <button onClick={handleSubmitEmail}>Skicka email</button><br/>
+                {sendEmailMessage}
+                </div>
+            : null }
         </div>
       );
 
