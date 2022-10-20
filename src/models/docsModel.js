@@ -13,7 +13,8 @@ const docs = {
     getDocs: async function getDocs(token) {
 
         const graphqlQuery = {
-            "query": `{ documents { _id name content owner allowed_users mode comments { row content } } }`,
+            "query": `{ documents { _id name content owner allowed_users 
+            mode comments { row content } } }`,
         };
 
         const response = await fetch(`${URL}/graphql/`,{

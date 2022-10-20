@@ -145,7 +145,9 @@ export default function Editor(props) {
 
   //Refresh list (and content) of documents from database
   async function refreshDocList(newMode = mode){
+
     const resultSet = await docsModel.getDocs(props.jwt);
+
     if ("data" in resultSet){
       const allDocs = resultSet.data.documents
       let allowedDocs = [];
